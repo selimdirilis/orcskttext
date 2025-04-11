@@ -16,9 +16,9 @@ class OCRDataset(Dataset):
                 self.data.append((filename, label))
 
         self.transform = transforms.Compose([
-            transforms.Resize((80, 200)),  # (Yükseklik, Genişlik)
+            transforms.Resize((80, 200)),  # (H, W)
             transforms.ToTensor(),
-            transforms.Normalize((0.5,), (0.5,))  # gri görüntü için normalize
+            transforms.Normalize((0.5,), (0.5,))
         ])
 
     def __len__(self):
@@ -27,9 +27,8 @@ class OCRDataset(Dataset):
     def __getitem__(self, idx):
         filename, label = self.data[idx]
         img_path = os.path.join(self.img_dir, filename)
-        image = Image.open(img_path).convert("L")  # Gri tonlama
+        image = Image.open(img_path).convert("L")
         image = self.transform(image)
 
-        # karakterleri indexlere çeviriyoruz
         label_indices = [self.char_to_idx.get(char, self.char_to_idx['<UNK>']) for char in label]
         return image, label_indices
